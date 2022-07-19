@@ -50,7 +50,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "boards.h"
+#include "lib/nrf/boards.h"
 
 #pragma GCC push_options
 #pragma GCC optimize("O0")
