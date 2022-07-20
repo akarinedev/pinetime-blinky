@@ -1,3 +1,12 @@
+SEARCH_DIR(.)
+GROUP(-lgcc -lc -lnosys)
+
+MEMORY
+{
+  FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x80000
+  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x10000
+}
+
 /* Linker script for Nordic Semiconductor nRF devices
  *
  * Version: Sourcery G++ 4.5-1
@@ -44,7 +53,7 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
  *   __StackTop
  *   __stack
  */
-ENTRY(entry_point)
+ENTRY(Reset_Handler)
 
 SECTIONS
 {
