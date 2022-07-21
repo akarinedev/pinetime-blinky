@@ -2,88 +2,66 @@
 
 PREFIX := arm-none-eabi
 
-COMMON_FLAGS := -mcpu=cortex-m4 -Os -flto
-
 CC := $(PREFIX)-gcc
-CC_FLAGS := $(COMMON_FLAGS) -DNRF52832_XXAA -DBOARD_PCA10040 -ffunction-sections -fdata-sections -ffreestanding -Os -Wall -Wextra -nostartfiles -MMD -Isrc
-CC_REL_FLAGS := $(CC_FLAGS) -DNDEBUG
-CC_DEB_FLAGS := $(CC_FLAGS) -g -DNDEBUG
-
+ASM := $(PREFIX)-gcc
 LD := $(PREFIX)-gcc
-LD_SCRIPT := nrf52.ld
-LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections
-LD_REL_FLAGS := $(LD_FLAGS) -Wl,--strip-debug -T $(LD_SCRIPT)
-LD_DEB_FLAGS := $(LD_FLAGS)
+GDB := $(PREFIX)-gdb
+OBJCOPY := $(PREFIX)-objcopy
+OBJDUMP := $(PREFIX)-objdump
+OPENOCD := openocd
 
+LD_SCRIPT := nrf52.ld
+
+COMMON_FLAGS := -mcpu=cortex-m4 -Os -flto
+CC_FLAGS := $(COMMON_FLAGS) -DNRF52832_XXAA -DBOARD_PCA10040 -ffunction-sections -fdata-sections -ffreestanding -Os -Wall -Wextra -MMD -Isrc -g3
+ASM_FLAGS := $(CC_FLAGS)
+LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections -Wl,--strip-debug -T $(LD_SCRIPT)
 
 SRCS := $(shell find src/ -type f -name "*.c")
 ASMS := $(shell find src/ -type f -name "*.s")
-REL_OBJS := $(SRCS:src/%.c=build/release/obj/%.o) $(ASMS:src/%.s=build/release/obj/%.o)
-DEB_OBJS := $(SRCS:src/%.c=build/debug/obj/%.o) $(ASMS:src/%.s=build/debug/obj/%.o)
-DEP_FILES := $(REL_OBJS:.o=.d) $(DEB_OBJS:.o=.d)
+OBJS := $(SRCS:src/%.c=build/obj/%.o) $(ASMS:src/%.s=build/obj/%.o)
+DEP_FILES := $(OBJS:.o=.d)
+EXEC := build/blinky
 
-EXEC_DEB := build/debug/blinky
-EXEC_REL := build/release/blinky
 
-# Binutils
-OBJCOPY := $(PREFIX)-objcopy
-OBJDUMP := $(PREFIX)-objdump
 
 # RULES FOR HUMANS
 
-default: release debug
+default: $(EXEC) $(EXEC).bin
 
-release: $(EXEC_REL) $(EXEC_REL).bin
-debug: $(EXEC_DEB) $(EXEC_DEB).bin
+flash: $(EXEC)
+	$(OPENOCD) -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $^ verify" -c "reset" -c "exit"
 
-flash: $(EXEC_REL).bin
-	openocd -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $(EXEC_REL) verify" -c "reset" -c "exit"
-
-flash-debug: $(EXEC_REL).bin
-	openocd -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $(EXEC_REL) verify" -c "reset" -c "halt"
+flash-debug: $(EXEC)
+	$(OPENOCD) -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $^ verify" -c "reset" -c "halt"
 
 openocd-gdb:
-	$(PREFIX)-gdb $(EXEC_REL) -ex "set architecture armv7e-m" -ex "target extended-remote localhost:3333"
+	$(GDB) $(EXEC) -ex "set architecture armv7e-m" -ex "target extended-remote localhost:3333"
 
 disasm:
-	$(OBJDUMP) -b binary -marm -D $(EXEC_REL).bin | less
-
-qemu: $(EXEC_REL).bin
-	qemu-system-arm -S -s -M virt -kernel $< -nographic
-
-qemu-gdb:
-	$(PREFIX)-gdb $(EXEC_REL) -ex "set architecture armv7e-m" -ex "target remote localhost:1234"
+	$(OBJDUMP) -b binary -marm -D $(EXEC).bin | less
 
 clean:
 	rm -r build
 
-.PHONY: default release debug flash flash-debug openocd-gdb qemu qemu-gdb clean
+.PHONY: default flash flash-debug openocd-gdb disasm clean
+
+
 
 # RULES FOR COMPUTERS
 
 build/%.bin: build/%
 	$(OBJCOPY) -O binary $< $@
 
-$(EXEC_REL): $(REL_OBJS) $(LD_SCRIPT)
-	$(LD) $(LD_REL_FLAGS) $(REL_OBJS) -o $@
+$(EXEC): $(OBJS) $(LD_SCRIPT)
+	$(LD) $(LD_FLAGS) $(OBJS) -o $@
 
-$(EXEC_DEB): $(DEB_OBJS) $(LD_SCRIPT)
-	$(LD) $(LD_DEB_FLAGS) $(DEB_OBJS) -o $@
-
-build/release/obj/%.o: src/%.c
+build/obj/%.o: src/%.c
 	@[ -d $(@D) ] || mkdir -p $(@D)
-	$(CC) $(CC_REL_FLAGS) -c $< -o $@
+	$(CC) $(CC_FLAGS) -c $< -o $@
 
-build/debug/obj/%.o: src/%.c
+build/obj/%.o: src/%.s
 	@[ -d $(@D) ] || mkdir -p $(@D)
-	$(CC) $(CC_DEB_FLAGS) -c $< -o $@
-
-build/release/obj/%.o: src/%.s
-	@[ -d $(@D) ] || mkdir -p $(@D)
-	$(CC) $(CC_REL_FLAGS) -c $< -o $@
-
-build/debug/obj/%.o: src/%.s
-	@[ -d $(@D) ] || mkdir -p $(@D)
-	$(CC) $(CC_DEB_FLAGS) -c $< -o $@
+	$(CC) $(ASM_FLAGS) -c $< -o $@
 
 -include $(DEP_FILES)
