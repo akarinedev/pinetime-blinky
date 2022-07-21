@@ -1,6 +1,7 @@
-#include <stdbool.h>
 #include <stdint.h>
-#include "lib/nrf/boards.h"
+#include <stdbool.h>
+
+#include "dri/gpio.h"
 
 // LED definitions
 #define LCD_BL_PIN      23
@@ -20,12 +21,13 @@ void sleep(long loops) {
  */
 int _start(void)
 {
-	nrf_gpio_cfg_output(LCD_BL_PIN);
+	dri_gpio_set_dir_output(LCD_BL_PIN);
+	dri_gpio_set_output(LCD_BL_PIN, true);
 
 	/* Toggle LEDs. */
 	while (true)
 	{
-		NRF_GPIO->OUT ^= LCD_BL_BIT;
+		dri_gpio_toggle_output(LCD_BL_PIN);
 		sleep(3000000);
 	}
 }

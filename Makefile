@@ -2,14 +2,16 @@
 
 PREFIX := arm-none-eabi
 
+COMMON_FLAGS := -mcpu=cortex-m4 -Os -flto
+
 CC := $(PREFIX)-gcc
-CC_FLAGS := -mcpu=cortex-m4 -DNRF52832_XXAA -DBOARD_PCA10040 -ffunction-sections -fdata-sections -ffreestanding -Os -Wall -Wextra -nostartfiles -MMD -Isrc
+CC_FLAGS := $(COMMON_FLAGS) -DNRF52832_XXAA -DBOARD_PCA10040 -ffunction-sections -fdata-sections -ffreestanding -Os -Wall -Wextra -nostartfiles -MMD -Isrc
 CC_REL_FLAGS := $(CC_FLAGS) -DNDEBUG
 CC_DEB_FLAGS := $(CC_FLAGS) -g -DNDEBUG
 
 LD := $(PREFIX)-gcc
 LD_SCRIPT := nrf52.ld
-LD_FLAGS := -mcpu=cortex-m4 -static -nostdlib -Wl,--gc-sections
+LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections
 LD_REL_FLAGS := $(LD_FLAGS) -Wl,--strip-debug -T $(LD_SCRIPT)
 LD_DEB_FLAGS := $(LD_FLAGS)
 
@@ -35,7 +37,10 @@ release: $(EXEC_REL) $(EXEC_REL).bin
 debug: $(EXEC_DEB) $(EXEC_DEB).bin
 
 flash: $(EXEC_REL).bin
-	openocd -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $(EXEC_REL) verify" -c "reset"
+	openocd -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $(EXEC_REL) verify" -c "reset" -c "exit"
+
+flash-debug: $(EXEC_REL).bin
+	openocd -f openocd.cfg -d2 -c "halt" -c "nrf5 mass_erase" -c "program $(EXEC_REL) verify" -c "reset" -c "halt"
 
 openocd-gdb:
 	$(PREFIX)-gdb $(EXEC_REL) -ex "set architecture armv7e-m" -ex "target extended-remote localhost:3333"
@@ -52,7 +57,7 @@ qemu-gdb:
 clean:
 	rm -r build
 
-.PHONY: default release debug flash qemu qemu-gdb clean
+.PHONY: default release debug flash flash-debug openocd-gdb qemu qemu-gdb clean
 
 # RULES FOR COMPUTERS
 
