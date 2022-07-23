@@ -39,7 +39,7 @@ openocd-gdb:
 	$(GDB) $(EXEC) -ex "set architecture armv7e-m" -ex "target extended-remote localhost:3333"
 
 disasm:
-	$(OBJDUMP) -D $(EXEC) | less
+	$(OBJDUMP) -d $(EXEC) | less
 
 clean:
 	rm -r build
