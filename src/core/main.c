@@ -6,9 +6,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//#include "dri/gpio.h"
-//#include "dri/spi.h"
 #include "dri/lcd.h"
+#include "dri/itm.h"
 
 #define LCD_BL_HIGH_PIN      23
 
@@ -32,16 +31,15 @@ void sleep(long loops) {
  */
 int _start(void)
 {
-	//dri_gpio_set_dir(LCD_BL_HIGH_PIN, true);
-	//dri_gpio_set_output(LCD_BL_HIGH_PIN, true);
-
 	dri_lcd_init();
+
+	dri_itm_init();
 
 	/* Toggle LEDs. */
 	while (true)
 	{
 		dri_lcd_backlight_set(3);
-		//dri_gpio_toggle_output(LCD_BL_HIGH_PIN);
+		dri_itm_test();
 		sleep(3000000);
 		dri_lcd_backlight_set(0);
 		sleep(3000000);
