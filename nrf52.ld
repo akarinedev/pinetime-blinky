@@ -1,11 +1,8 @@
-SEARCH_DIR(.)
-/*GROUP(-lgcc -lc -lnosys)*/
-
-MEMORY
-{
-  FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x80000
-  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x10000
-}
+/*
+ * Linkerscript for PineTime smartwatch
+ * Adapted from Nordic Semiconductor's nrf5sdk
+ * @author Akari Neukirch <akari@akarine.dev>
+ */
 
 /* Linker script for Nordic Semiconductor nRF devices
  *
@@ -24,7 +21,16 @@ MEMORY
  * the new terms are clearly indicated on the first page of each file where
  * they apply.
  */
-OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
+
+SEARCH_DIR(.)
+
+MEMORY
+{
+  FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x80000
+  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x10000
+}
+
+OUTPUT_FORMAT ("elf32-littlearm")
 
 /* Linker script to place sections and symbol values. Should be used together
  * with other linker script that defines memory regions FLASH and RAM.

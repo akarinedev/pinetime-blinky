@@ -1,6 +1,8 @@
 /**
- * You know what a main.c does
- * Glues it all together
+ * @file
+ * @author Akari Neukirch <akari@akarine.dev>
+ * @section Description
+ * Main operation of the program. Ties it all together
  */
 
 #include <stdint.h>
@@ -9,12 +11,11 @@
 #include "dri/lcd.h"
 #include "dri/itm.h"
 
-#define LCD_BL_HIGH_PIN      23
-
 /**
- * Sleeps a specificed number of iterations of a loop
- * Awful, bad, horrible, inaccurate in every way
- * To be replaced soon
+ * Sleeps for some time vaguely proportional to input value.
+ * Implemented by an empty loop for now.
+ * Awful, bad, horrible, inaccurate in every way.
+ * TODO: Replace with RTC-based sleep, and eventually interrupt-based
  * @param loops: the number of rounds through the for loop to do
  */
 #pragma GCC push_options

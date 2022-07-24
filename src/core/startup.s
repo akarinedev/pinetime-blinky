@@ -1,4 +1,10 @@
 /*
+ * Entry point for the program.
+ * Adapted from ARM and Nordic Semiconductor's nrf5sdk
+ * @author Akari Neukirch <akari@akarine.dev>
+ */
+
+/*
  
 Copyright (c) 2009-2018 ARM Limited. All rights reserved.
 
