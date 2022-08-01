@@ -9,16 +9,22 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//TODO: replace with struct
-/// the base address of the GPIO register bank
-uint32_t* const GPIO_BASE = (uint32_t*) 0x50000000;
+typedef struct {
+	uint8_t unused1[0x504];
+	uint32_t OUT;
+	uint32_t OUTSET;
+	uint32_t OUTCLR;
+	uint32_t IN;
+	uint32_t DIR;
+	uint32_t DIRSET;
+	uint32_t DIRCLR;
+	uint32_t LATCH;
+	uint32_t DETECTMODE;
+	uint8_t unused2[0x1d8];
+	uint32_t PIN_CNF[32];
+} gpio_t;
 
-/// Write GPIO pin output
-#define OUT			(0x504 / 4)
-/// Read GPIO pin input
-#define IN			(0x510 / 4)
-/// Direction of GPIO pin (input/output)
-#define DIR			(0x514 / 4)
+gpio_t* const GPIO = (gpio_t*) 0x50000000;
 
 /**
  * Sets a GPIO pin as an input or output.
@@ -26,10 +32,8 @@ uint32_t* const GPIO_BASE = (uint32_t*) 0x50000000;
  * @param dir: false for input, true for output
  */
 void dri_gpio_set_dir(uint8_t pin, bool dir) {
-	uint32_t clear_mask = ~(1 << pin);
-	GPIO_BASE[DIR] &= clear_mask;
-	uint32_t mask = (uint32_t) dir << pin;
-	GPIO_BASE[DIR] |= mask;
+	GPIO->DIRCLR = (1 << pin);
+	GPIO->DIRSET = (dir << pin);
 }
 
 /**
@@ -38,10 +42,8 @@ void dri_gpio_set_dir(uint8_t pin, bool dir) {
  * @param value: true for high, false for low
  */
 void dri_gpio_set_output(uint8_t pin, bool value) {
-	uint32_t clear_mask = ~(1 << pin);
-	GPIO_BASE[OUT] &= clear_mask;
-	uint32_t mask = (uint32_t) value << pin;
-	GPIO_BASE[OUT] |= mask;
+	GPIO->OUTCLR = (1 << pin);
+	GPIO->OUTSET = (value << pin);
 }
 
 /**
@@ -50,5 +52,5 @@ void dri_gpio_set_output(uint8_t pin, bool value) {
  */
 void dri_gpio_toggle_output(uint8_t pin) {
 	uint32_t mask = 1 << pin;
-	GPIO_BASE[OUT] ^= mask;
+	GPIO->OUT ^= mask;
 }
