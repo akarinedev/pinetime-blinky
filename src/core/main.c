@@ -32,15 +32,17 @@ void sleep(long loops) {
  */
 int _start(void)
 {
+	dri_itm_init();
+
 	dri_lcd_init();
 
-	dri_itm_init();
+
 
 	/* Toggle LEDs. */
 	while (true)
 	{
 		dri_lcd_backlight_set(3);
-		dri_itm_test();
+		//dri_itm_test();
 		sleep(3000000);
 		dri_lcd_backlight_set(0);
 		sleep(3000000);

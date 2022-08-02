@@ -43,9 +43,9 @@ uint32_t* const SPI_BASE = (uint32_t*) 0x40003000;
  */
 void dri_spi_init() {
 	// Setup gpio pins as input/output
-	dri_gpio_set_dir(2, true);
-	dri_gpio_set_dir(3, true);
-	dri_gpio_set_dir(4, false);
+	dri_gpio_dir_set(2, true);
+	dri_gpio_dir_set(3, true);
+	dri_gpio_dir_set(4, false);
 
 	// Tell SPI which pins to use
 	SPI_BASE[PSEL_SCK] = 2;

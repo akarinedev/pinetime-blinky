@@ -40,19 +40,19 @@ const uint8_t PINS_BL[] = {0, PIN_BL_LOW, PIN_BL_MED, PIN_BL_HI};
 void dri_lcd_init() {
 	backlight_brightness = 0;
 
-	dri_gpio_set_dir(PIN_RS, true);
-	dri_gpio_set_dir(PIN_CS, true);
-	dri_gpio_set_dir(PIN_RESET, true);
-	dri_gpio_set_dir(PIN_BL_LOW, true);
-	dri_gpio_set_dir(PIN_BL_MED, true);
-	dri_gpio_set_dir(PIN_BL_HI, true);
+	dri_gpio_dir_set(PIN_RS, true);
+	dri_gpio_dir_set(PIN_CS, true);
+	dri_gpio_dir_set(PIN_RESET, true);
+	dri_gpio_dir_set(PIN_BL_LOW, true);
+	dri_gpio_dir_set(PIN_BL_MED, true);
+	dri_gpio_dir_set(PIN_BL_HI, true);
 
-	dri_gpio_set_output(PIN_RS, true);
-	dri_gpio_set_output(PIN_CS, true);
-	dri_gpio_set_output(PIN_RESET, true);
-	dri_gpio_set_output(PIN_BL_LOW, true);
-	dri_gpio_set_output(PIN_BL_MED, true);
-	dri_gpio_set_output(PIN_BL_HI, true);
+	dri_gpio_output_set(PIN_RS, false);
+	dri_gpio_output_set(PIN_CS, true);
+	dri_gpio_output_set(PIN_RESET, true);
+	dri_gpio_output_set(PIN_BL_LOW, true);
+	dri_gpio_output_set(PIN_BL_MED, true);
+	dri_gpio_output_set(PIN_BL_HI, true);
 }
 
 
@@ -64,11 +64,11 @@ void dri_lcd_init() {
 void dri_lcd_backlight_set(uint8_t level) {
 	if(backlight_brightness != 0) {
 		// Turn off current backlight level
-		dri_gpio_set_output(PINS_BL[backlight_brightness], true);
+		dri_gpio_output_set(PINS_BL[backlight_brightness], true);
 	}
 
 	if(level != 0) {
-		dri_gpio_set_output(PINS_BL[level], false);
+		dri_gpio_output_set(PINS_BL[level], false);
 	}
 	backlight_brightness = level;
 }

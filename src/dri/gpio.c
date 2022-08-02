@@ -31,7 +31,7 @@ gpio_t* const GPIO = (gpio_t*) 0x50000000;
  * @param pin: the pin to set direction
  * @param dir: false for input, true for output
  */
-void dri_gpio_set_dir(uint8_t pin, bool dir) {
+void dri_gpio_dir_set(uint8_t pin, bool dir) {
 	GPIO->DIRCLR = (1 << pin);
 	GPIO->DIRSET = (dir << pin);
 }
@@ -41,7 +41,7 @@ void dri_gpio_set_dir(uint8_t pin, bool dir) {
  * @param pin: the pin to set
  * @param value: true for high, false for low
  */
-void dri_gpio_set_output(uint8_t pin, bool value) {
+void dri_gpio_output_set(uint8_t pin, bool value) {
 	GPIO->OUTCLR = (1 << pin);
 	GPIO->OUTSET = (value << pin);
 }
@@ -50,7 +50,7 @@ void dri_gpio_set_output(uint8_t pin, bool value) {
  * Toggles a pin's output.
  * @param pin: the pin to set
  */
-void dri_gpio_toggle_output(uint8_t pin) {
+void dri_gpio_output_toggle(uint8_t pin) {
 	uint32_t mask = 1 << pin;
 	GPIO->OUT ^= mask;
 }
