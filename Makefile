@@ -49,10 +49,12 @@ disasm:
 docs:
 	doxygen Doxyfile
 
+all: default docs
+
 clean:
 	rm -r build
 
-.PHONY: default flash flash-debug gdb disasm docs clean
+.PHONY: default flash flash-debug gdb disasm docs all clean
 
 
 
