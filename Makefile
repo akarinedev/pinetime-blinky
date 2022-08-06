@@ -17,10 +17,10 @@ OPENOCD := openocd
 
 LD_SCRIPT := nrf52.ld
 
-COMMON_FLAGS := -mcpu=cortex-m4 -Os -flto
-CC_FLAGS := $(COMMON_FLAGS) -ffunction-sections -fdata-sections -ffreestanding -Os -Wall -Wextra -MMD -Isrc -g3
+COMMON_FLAGS := -mcpu=cortex-m4
+CC_FLAGS := $(COMMON_FLAGS) -ffunction-sections -fdata-sections -ffreestanding -Wall -Wextra -MMD -Isrc -g3
 ASM_FLAGS := $(CC_FLAGS)
-LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections -Wl,--strip-debug -T $(LD_SCRIPT)
+LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections -T $(LD_SCRIPT)
 
 SRCS := $(shell find src/ -type f -name "*.c")
 ASMS := $(shell find src/ -type f -name "*.s")
