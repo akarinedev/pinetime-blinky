@@ -1,7 +1,7 @@
 /**
  * @file
  * Contains functions to use ARM Semihosting functionality
- * Semihosting documentation: <a href="https://developer.arm.com/documentation/dui0471/i/semihosting?lang=en">ARM Compiler toolchain Developing Software</a>
+ * Semihosting documentation in <a href="https://developer.arm.com/documentation/dui0471/m/what-is-semihosting-?lang=en">ARM Compiler Software Development Guide, Section 7</a>.
  * @author Akari Neukirch <akari@akarine.dev>
  */
 
@@ -11,21 +11,20 @@
 
 /**
  * Execute a semihosting operation by number and parameter.
- * @param operation: the operation to perform, referenced from ARM toolchain manual
+ * @param operation: the operation to perform, referenced from the ARM Compiler Software Development Guide, Section 7
  * @param param: meaning depends on operation
  */
-static void semihosting_exec(uint32_t operation, uint32_t param) {
-	register uint32_t r2 asm ("r2") = operation;
-	register uint32_t r1 asm ("r1") = param;
+static uint32_t semihosting_exec(uint32_t operation, uint32_t param) {
+	register uint32_t operation_reg asm ("r0") = operation;
+	register uint32_t param_reg asm ("r1") = param;
 
-	asm(
-		"MOV r0, r2\n"
+	asm volatile(
 		"BKPT 0xAB"
-		:
-		: "r" (r1),
-		  "r" (r2)
-		: "r0"
+		: "+r" (operation_reg)
+		: "r" (param_reg)
 	);
+
+	return operation_reg;
 }
 
 /**
