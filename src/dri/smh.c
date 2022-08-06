@@ -42,3 +42,18 @@ void dri_smh_send_char(char ch) {
 void dri_smh_send_string(char* string) {
 	semihosting_exec(0x04, (uint32_t) string);
 }
+
+char dri_smh_read_char() {
+	return (char) semihosting_exec(0x07, 0);
+}
+
+uint32_t dri_smh_read_line(char* buffer, uint32_t maxlen) {
+	uint32_t numchars = 0;
+	char c;
+	while((c = dri_smh_read_char()) != '\n' && numchars < maxlen) {
+		buffer[numchars] = c;
+		numchars++;
+	}
+	buffer[numchars] = '\0'; // Null-terminate
+	return numchars;
+}

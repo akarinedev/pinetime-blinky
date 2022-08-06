@@ -35,12 +35,18 @@ static void main() {
 
 	dri_smh_send_string("Initialized\n");
 
+	char buf[64];
+
 	/* Toggle LEDs. */
 	while (true)
 	{
 		dri_lcd_backlight_set(3);
-		dri_smh_send_string("Hello World!\n");
-		sleep(3000000);
+		dri_smh_send_string("Input: ");
+		uint32_t readchars = dri_smh_read_line(buf, 64);
+		dri_smh_send_string("Output: ");
+		dri_smh_send_string(buf);
+		dri_smh_send_char('\n');
+
 		dri_lcd_backlight_set(0);
 		sleep(3000000);
 	}
