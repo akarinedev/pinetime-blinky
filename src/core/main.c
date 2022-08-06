@@ -20,20 +20,20 @@
  */
 #pragma GCC push_options
 #pragma GCC optimize("O0")
-void sleep(long loops) {
+static void sleep(long loops) {
 	for(int i = 0; i < loops; i++) {}
 }
 #pragma GCC pop_options
 
 /**
- * Entry point from assembly-land into c-land
+ * Main function, does everything and anything!
  */
-int _start(void)
-{
-	// Sleep so we don't blow by main before gdb attaches
-	sleep(3000000);
+static void main() {
+	dri_smh_send_string("Initializing...\n");
 
 	dri_lcd_init();
+
+	dri_smh_send_string("Initialized\n");
 
 	/* Toggle LEDs. */
 	while (true)
@@ -44,6 +44,17 @@ int _start(void)
 		dri_lcd_backlight_set(0);
 		sleep(3000000);
 	}
+}
+
+/**
+ * Entry point from assembly-land into c-land
+ */
+int _start(void)
+{
+	// Sleep so we don't enter before gdb attaches
+	sleep(3000000);
+	main();
+	return 0; //Never reached
 }
 
 

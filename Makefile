@@ -17,7 +17,7 @@ OPENOCD := openocd
 
 LD_SCRIPT := nrf52.ld
 
-COMMON_FLAGS := -mcpu=cortex-m4
+COMMON_FLAGS := -mcpu=cortex-m4 -Os -flto
 CC_FLAGS := $(COMMON_FLAGS) -ffunction-sections -fdata-sections -ffreestanding -Wall -Wextra -MMD -Isrc -g3
 ASM_FLAGS := $(CC_FLAGS)
 LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections -T $(LD_SCRIPT)
@@ -52,7 +52,7 @@ docs:
 all: default docs
 
 clean:
-	rm -r build
+	rm -rf build docs
 
 .PHONY: default flash flash-debug gdb disasm docs all clean
 
