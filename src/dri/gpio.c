@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
 typedef struct {
 	uint8_t unused1[0x504];
 	uint32_t OUT;
@@ -25,6 +26,7 @@ typedef struct {
 } gpio_t;
 
 gpio_t* const GPIO = (gpio_t*) 0x50000000;
+
 
 /**
  * Sets a GPIO pin as an input or output.

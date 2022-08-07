@@ -5,6 +5,8 @@ Motivated by my dislike for overly complex dependency trees and build systems, a
 Written purely in C and assembly, and compiled using a simple makefile.
 
 ## Dependencies
+* PineTime smartwatch
+* ST-Link v2 or compatible debugger
 * make
 * arm-none-eabi-gcc
 * arm-none-eabi-binutils
