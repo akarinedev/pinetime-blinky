@@ -90,12 +90,15 @@ void dri_i2c_init() {
 	// Enable STOP shortcuts
 	TWIM->SHORTS = 0x00001200;
 
+	// Enable STOPPED Event
+	TWIM->INTENSET = 0x00000002;
+
 	// Enable TWIM
 	TWIM->ENABLE = 6;
 }
 
 /**
- * Transmit data over I2C.
+ * Simple data transmit over I2C, not for register-based devices.
  * @param address: i2c address to write data to
  * @param buffer: Buffer to transmit data from
  * @param buf_len: Buffer length
@@ -109,13 +112,13 @@ static void simple_tx(uint8_t address, uint8_t* buffer, uint8_t buf_len) {
 
 	// Wait for transmission end
 	// TODO: asynchronous waiting, interrupts or something
-	while(TWIM->EVENTS.LASTRX == 0) {}
+	while(TWIM->EVENTS.STOPPED == 0) {}
 	// Reset stop flag
 	TWIM->EVENTS.STOPPED = 0;
 }
 
 /**
- * Receive data over I2C.
+ * Simple data receive over I2C, not for register-based devices.
  * @param address: i2c address to receive data from
  * @param buffer: Buffer to receive data to
  * @param buf_len: Buffer length
@@ -134,10 +137,23 @@ static void simple_rx(uint8_t address, uint8_t* buffer, uint8_t buf_len) {
 	TWIM->EVENTS.STOPPED = 0;
 }
 
+/**
+ * Write a register to an I2C peripheral
+ * @param address: i2c device to write data to
+ * @param reg: Register to write to
+ * @param data: Data to write to register
+ */
 void dri_i2c_register_write(uint8_t address, uint8_t reg, uint8_t data) {
-
+	uint8_t buf[2] = {reg, data};
+	simple_tx(address, buf, 2);
 }
 
+/**
+ * Read a register from an I2C peripheral
+ * @param address: i2c device to receive data from
+ * @param reg: Register to read from
+ * @return: The read byte
+ */
 uint8_t dri_i2c_register_read(uint8_t address, uint8_t reg) {
 	uint8_t output;
 	simple_tx(address, &reg, 1);

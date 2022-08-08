@@ -45,13 +45,17 @@ static void main() {
 	dri_smh_send_string("Initialized\n");
 
 	uint8_t stepcnt;
+	char printbuf[64];
 
 	/* Toggle LEDs. */
 	while (true)
 	{
 		dri_lcd_backlight_set(3);
 
+		// Read step count byte 0 from accelerometer
 		stepcnt = dri_i2c_register_read(0x18, 0x99);
+		// Yayyy, I need to implement printf
+		//snprintf(printbuf, 64, "Steps: %u", stepcnt);
 
 		sleep(3000000);
 		dri_lcd_backlight_set(0);
