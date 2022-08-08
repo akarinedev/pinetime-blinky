@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "dri/i2c.h"
 #include "dri/spi.h"
 #include "dri/smh.h"
 #include "dri/lcd.h"
@@ -28,6 +29,7 @@ static void sleep(long loops) {
 #pragma GCC pop_options
 
 static void init() {
+	dri_i2c_init();
 	dri_spi_init();
 	dri_lcd_init();
 }
@@ -42,12 +44,15 @@ static void main() {
 
 	dri_smh_send_string("Initialized\n");
 
-	char buf[64];
+	uint8_t stepcnt;
 
 	/* Toggle LEDs. */
 	while (true)
 	{
 		dri_lcd_backlight_set(3);
+
+		stepcnt = dri_i2c_register_read(0x18, 0x99);
+
 		sleep(3000000);
 		dri_lcd_backlight_set(0);
 		sleep(3000000);

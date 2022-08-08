@@ -59,10 +59,15 @@ typedef struct {
 } spim_t;
 
 spim_t* const SPIM0 = (spim_t*) 0x40003000;
+spim_t* const SPIM1 = (spim_t*) 0x40004000;
+spim_t* const SPIM2 = (spim_t*) 0x40023000;
+
+#define SPIM SPIM1
 
 #define PIN_SCK 2
 #define PIN_MOSI 3
 #define PIN_MISO 4
+
 
 /**
  * Initialize SPI subsystem.
@@ -74,15 +79,15 @@ void dri_spi_init() {
 	dri_gpio_dir_set(PIN_MISO, false);
 
 	// Tell SPI which pins to use
-	SPIM0->PSEL_SCK = PIN_SCK;
-	SPIM0->PSEL_MOSI = PIN_MOSI;
-	SPIM0->PSEL_MISO = PIN_MISO;
+	SPIM->PSEL_SCK = PIN_SCK;
+	SPIM->PSEL_MOSI = PIN_MOSI;
+	SPIM->PSEL_MISO = PIN_MISO;
 
 	// Set SPI frequency to 8Mbps, the maximum supported
-	SPIM0->FREQUENCY = 0x80000000;
+	SPIM->FREQUENCY = 0x80000000;
 
 	// Enable SPIM
-	SPIM0->ENABLE = 7;
+	SPIM->ENABLE = 7;
 }
 
 /**
@@ -91,18 +96,18 @@ void dri_spi_init() {
  * @param buf_len: Buffer length
  */
 void dri_spi_tx(uint8_t* buffer, uint8_t buf_len) {
-	SPIM0->TXD_PTR = (uint32_t) buffer;
-	SPIM0->TXD_MAXCNT = buf_len;
+	SPIM->TXD_PTR = (uint32_t) buffer;
+	SPIM->TXD_MAXCNT = buf_len;
 
-	SPIM0->RXD_MAXCNT = 0;
+	SPIM->RXD_MAXCNT = 0;
 
-	SPIM0->TASKS_START = 1;
+	SPIM->TASKS_START = 1;
 
 	// Wait for transmission end
 	// TODO: asynchronous waiting, interrupts or something
-	while(SPIM0->EVENTS_STOPPED == 0) {}
+	while(SPIM->EVENTS_STOPPED == 0) {}
 	// Reset stop flag
-	SPIM0->EVENTS_STOPPED = 0;
+	SPIM->EVENTS_STOPPED = 0;
 }
 
 /**
@@ -111,16 +116,16 @@ void dri_spi_tx(uint8_t* buffer, uint8_t buf_len) {
  * @param buf_len: Buffer length
  */
 void dri_spi_rx(uint8_t* buffer, uint8_t buf_len) {
-	SPIM0->RXD_PTR = (uint32_t) buffer;
-	SPIM0->RXD_MAXCNT = buf_len;
+	SPIM->RXD_PTR = (uint32_t) buffer;
+	SPIM->RXD_MAXCNT = buf_len;
 
-	SPIM0->TXD_MAXCNT = 0;
+	SPIM->TXD_MAXCNT = 0;
 
-	SPIM0->TASKS_START = 1;
+	SPIM->TASKS_START = 1;
 
 	// Wait for transmission end
 	// TODO: asynchronous waiting, interrupts or something
-	while(SPIM0->EVENTS_STOPPED == 0) {}
+	while(SPIM->EVENTS_STOPPED == 0) {}
 	// Reset stop flag
-	SPIM0->EVENTS_STOPPED = 0;
+	SPIM->EVENTS_STOPPED = 0;
 }
