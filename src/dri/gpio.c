@@ -25,7 +25,7 @@ typedef struct {
 	uint32_t PIN_CNF[32];
 } gpio_t;
 
-gpio_t* const GPIO = (gpio_t*) 0x50000000;
+volatile gpio_t* const GPIO = (gpio_t*) 0x50000000;
 
 
 /**

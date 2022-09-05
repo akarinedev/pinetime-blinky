@@ -59,7 +59,7 @@ static void main() {
 		dri_smh_send_string("Steps: ");
 		itostr(stepcnt, writebuf, 10);
 		dri_smh_send_string(writebuf);
-		dri_smh_send_char('\n');
+		dri_smh_send_string("\n");
 
 
 		// Yayyy, I need to implement printf

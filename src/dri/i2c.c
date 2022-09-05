@@ -67,8 +67,8 @@ typedef struct {
 	uint32_t ADDRESS;
 } twim_t;
 
-twim_t* const TWIM0 = (twim_t*) 0x40003000;
-twim_t* const TWIM1 = (twim_t*) 0x40004000;
+volatile twim_t* const TWIM0 = (twim_t*) 0x40003000;
+volatile twim_t* const TWIM1 = (twim_t*) 0x40004000;
 
 #define TWIM TWIM0
 
@@ -155,7 +155,7 @@ void dri_i2c_register_write(uint8_t address, uint8_t reg, uint8_t data) {
  * @return: The read byte
  */
 uint8_t dri_i2c_register_read(uint8_t address, uint8_t reg) {
-	uint8_t output;
+	uint8_t output = 0;
 	simple_tx(address, &reg, 1);
 	simple_rx(address, &output, 1);
 	return output;

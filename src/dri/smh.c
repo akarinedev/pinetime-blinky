@@ -14,21 +14,25 @@
  * @param operation: the operation to perform, referenced from the ARM Compiler Software Development Guide, Section 7
  * @param param: meaning depends on operation
  */
-static uint32_t semihosting_exec(uint32_t operation, uint32_t param) {
-	register uint32_t operation_reg asm ("r0") = operation;
-	register uint32_t param_reg asm ("r1") = param;
+static uint32_t semihosting_exec(uint32_t operation, uint32_t parameter) {
+	uint32_t return_val;
 
 	asm volatile(
-		"BKPT 0xAB"
-		: "+r" (operation_reg)
-		: "r" (param_reg)
+		"MOV r0, %[op];"
+		"MOV r1, %[param];"
+		"BKPT 0xAB;"
+		"MOV %[ret], r0;"
+		: [ret] "=r" (return_val)
+		: [op] "r" (operation), [param] "r" (parameter)
+		: "r0", "r1"
 	);
 
-	return operation_reg;
+	return return_val;
 }
 
 /**
  * Writes one character to the attached debugger.
+ * TODO: Currently nonfunctional, -O breaks parameters
  * @param ch: the character to print
  */
 void dri_smh_send_char(char ch) {

@@ -58,9 +58,9 @@ typedef struct {
 	uint32_t ORC;
 } spim_t;
 
-spim_t* const SPIM0 = (spim_t*) 0x40003000;
-spim_t* const SPIM1 = (spim_t*) 0x40004000;
-spim_t* const SPIM2 = (spim_t*) 0x40023000;
+volatile spim_t* const SPIM0 = (spim_t*) 0x40003000;
+volatile spim_t* const SPIM1 = (spim_t*) 0x40004000;
+volatile spim_t* const SPIM2 = (spim_t*) 0x40023000;
 
 #define SPIM SPIM1
 

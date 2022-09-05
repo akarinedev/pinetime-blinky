@@ -17,7 +17,7 @@
  * @return: Number of characters successfully printed, negative if there was an error
  */
 int printf(const char* restrict format, ...) {
-	char* head = format;\
+	char* head = format;
 	char curchar;
 	while((curchar = *head) != '\0') {
 		if(curchar == '%') {

@@ -17,7 +17,8 @@ OPENOCD := openocd
 
 LD_SCRIPT := nrf52.ld
 
-COMMON_FLAGS := -mcpu=cortex-m4
+OPTIMIZATION_FLAGS := -O2 -flto
+COMMON_FLAGS := -mcpu=cortex-m4 $(OPTIMIZATION_FLAGS)
 CC_FLAGS := $(COMMON_FLAGS) -ffreestanding -ffunction-sections -fdata-sections -Wall -Wextra -MMD -Isrc -g3
 ASM_FLAGS := $(CC_FLAGS)
 LD_FLAGS := $(COMMON_FLAGS) -static -nostdlib -Wl,--gc-sections -T $(LD_SCRIPT)
