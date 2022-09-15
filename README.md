@@ -10,7 +10,7 @@ Working from the bottom up, currently working on getting drivers for all applica
 ## Dependencies
 * PineTime smartwatch
 * ST-Link v2 or compatible debugger
-* make
+* GNU make
 * arm-none-eabi-gcc
 * arm-none-eabi-binutils
 * arm-none-eabi-gdb (for debugging)
